@@ -1,15 +1,17 @@
-FROM node:20-alpine AS build
+# Etapa de build con Node y Vite
+FROM node:18-alpine AS build
 WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN npm ci --no-audit --no-fund
-COPY public ./public
-COPY src ./src
-ARG REACT_APP_API_BASE
-ENV REACT_APP_API_BASE=${REACT_APP_API_BASE}
+COPY package*.json ./
+RUN npm install
+COPY . .
 RUN npm run build
 
-FROM nginx:1.27-alpine
-COPY --from=build /app/build /usr/share/nginx/html
+# Etapa de ejecución con Nginx
+FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
+# Copiamos los archivos compilados de React/Vite
+COPY --from=build /app/dist .
+# Copiamos configuración personalizada de Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 8080
-CMD ["nginx","-g","daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
