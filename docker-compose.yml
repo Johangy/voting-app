@@ -35,7 +35,7 @@ services:
     build:
       context: ./frontend
       args:
-        REACT_APP_API_BASE: http://api-servicio:8081/api
+        VITE_API_BASE: http://api-servicio:8081/api
     container_name: voting-ui
     depends_on:
       - api-servicio

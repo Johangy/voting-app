@@ -32,5 +32,11 @@ public class PollController {
     public ResponseEntity<PollResponse> vote(@PathVariable Long optionId) {
         return ResponseEntity.ok(service.vote(optionId));
     }
+
+    @DeleteMapping("/{pollId}")
+    public ResponseEntity<Void> delete(@PathVariable Long pollId) {
+        service.deletePoll(pollId);
+        return ResponseEntity.noContent().build();
+    }
 }
 

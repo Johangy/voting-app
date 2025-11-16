@@ -12,6 +12,11 @@ yarn-error.log*
 .vscode/
 .idea/
 
+# Maven / Spring Boot
+target/
+
 # Sistema
 .DS_Store
 Thumbs.db
+
+.env*

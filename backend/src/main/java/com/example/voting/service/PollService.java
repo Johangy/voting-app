@@ -2,7 +2,6 @@ package com.example.voting.service;
 
 import com.example.voting.dto.PollResponse;
 import com.example.voting.dto.OptionResponse;
-
 import com.example.voting.factory.PollFactory;
 import com.example.voting.model.Option;
 import com.example.voting.model.Poll;
@@ -41,6 +40,14 @@ public class PollService {
         opt.setVotes(opt.getVotes() + 1);
         optionRepo.save(opt);
         return toResponse(opt.getPoll());
+    }
+
+    @Transactional
+    public void deletePoll(Long pollId) {
+        if (!pollRepo.existsById(pollId)) {
+            throw new IllegalArgumentException("Poll not found");
+        }
+        pollRepo.deleteById(pollId);
     }
 
     private PollResponse toResponse(Poll poll) {
