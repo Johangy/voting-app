@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: voting-db
+    environment:
+      - POSTGRES_DB=votingdb
+      - POSTGRES_USER=voting
+      - POSTGRES_PASSWORD=secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - votingnet
+
+  api-servicio:
+    build:
+      context: ./backend
+    container_name: voting-api
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/votingdb
+      - DB_USER=voting
+      - DB_PASSWORD=secret
+      - PORT=8081
+    depends_on:
+      - db
+    ports:
+      - "8081:8081"
+    networks:
+      - votingnet
+
+  ui-servicio:
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_API_BASE: http://api-servicio:8081/api
+    container_name: voting-ui
+    depends_on:
+      - api-servicio
+    ports:
+      - "8080:8080"
+    networks:
+      - votingnet
+
+networks:
+  votingnet:
+
+volumes:
+  dbdata:
