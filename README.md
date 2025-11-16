@@ -19,8 +19,8 @@ Aplicación de votación simple construida como prueba técnica.
 
 ### Pasos
 1. Clonar el repositorio:
-   ```bash
-   git clone https://github.com/tuusuario/voting-app.git
+   
+   git clone https://github.com/Johangy/voting-app.git
    cd voting-app
 
 2. Levantar los servicios con Docker Compose:
@@ -33,15 +33,15 @@ Aplicación de votación simple construida como prueba técnica.
 
 ### Estructura del proyecto: 
 voting-app/
-├── backend/          # Código del backend (Spring Boot)
-│   └── Dockerfile
-├── frontend/         # Código del frontend (React + Vite)
-│   ├── src/
-│   ├── public/
-│   └── Dockerfile
-├── docker-compose.yml
-├── .gitignore
-└── README.md
+    backend/          # Código del backend (Spring Boot)
+        Dockerfile
+    frontend/         # Código del frontend (React + Vite)
+        src/
+        public/
+        Dockerfile
+    docker-compose.yml
+    .gitignore
+    README.md
 
 ### Funcionalidades:
     Crear encuestas con título y opciones.
@@ -50,11 +50,11 @@ voting-app/
     Ver conteo de votos en tiempo real.
 
 ### Flujo de ramas:
-    feature/backend → API en Spring Boot.
-    feature/frontend → SPA en React.
-    feature/docker → Dockerfiles y Compose.
-    develop → integración de todas las features.
-    main → rama estable final.
+    feature/backend : API en Spring Boot.
+    feature/frontend : SPA en React.
+    feature/docker : Dockerfiles y Compose.
+    develop : integración de todas las features.
+    main : rama estable final.
 
 
 
