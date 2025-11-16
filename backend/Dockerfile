@@ -1,3 +1,4 @@
+# Etapa de build
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY pom.xml .
@@ -5,6 +6,7 @@ RUN mvn -q -B dependency:go-offline
 COPY src ./src
 RUN mvn -q -B package -DskipTests
 
+# Etapa de ejecución
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 ENV DB_URL=jdbc:postgresql://db:5432/votingdb
