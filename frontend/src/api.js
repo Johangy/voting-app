@@ -1,30 +1,71 @@
-//const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8081/api";
-//const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8081/api";
-const API_BASE = "/api";
+import { createClient } from '@supabase/supabase-js'
 
+// 1. Inicializamos el cliente usando las variables de entorno
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+// --- FUNCIONES ---
+
+// 2. LISTAR (GET): Conexión Directa a la Base de Datos
+// Ya no llamamos a una API intermedia. El frontend pide los datos directo a Postgres.
 export async function fetchPolls() {
-  const res = await fetch(`${API_BASE}/polls`);
-  return res.json();
+  const { data, error } = await supabase
+    .from('polls') // Tabla 'polls'
+    .select(`
+      id,
+      title,
+      options ( id, text, votes ) 
+    `) 
+    // OJO: Pedimos las opciones relacionadas automáticamente (JOIN)
+    .order('id', { ascending: false })
+  
+  if (error) {
+    console.error("Error fetching polls:", error)
+    throw error
+  }
+  return data
 }
 
+// 3. CREAR (POST): Llamada a Edge Function
+// Usamos la función porque crear una encuesta es complejo (insertar padre + hijos)
 export async function createPoll(title, options) {
-  const res = await fetch(`${API_BASE}/polls`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, options }),
-  });
-  return res.json();
+  const { data, error } = await supabase.functions.invoke('create-poll', {
+    body: { title, options }
+  })
+  
+  if (error) {
+    console.error("Error creating poll:", error)
+    throw error
+  }
+  return data
 }
 
+// 4. VOTAR (POST): Llamada a Edge Function
+// Usamos la función para encapsular la lógica del voto
 export async function vote(optionId) {
-  const res = await fetch(`${API_BASE}/polls/${optionId}/vote`, { method: "POST" });
-  return res.json();
+  const { data, error } = await supabase.functions.invoke('vote', {
+    body: { optionId }
+  })
+  
+  if (error) {
+    console.error("Error voting:", error)
+    throw error
+  }
+  return data
 }
 
+// 5. BORRAR (DELETE): Conexión Directa
+// Gracias a la regla "ON DELETE CASCADE" en la base de datos, 
+// al borrar la encuesta, se borran solas las opciones. No necesitamos backend.
 export async function deletePoll(pollId) {
-  const res = await fetch(`${API_BASE}/polls/${pollId}`, { method: "DELETE" });
-  if (!res.ok) {
-    throw new Error("Error al eliminar la encuesta");
+  const { error } = await supabase
+    .from('polls')
+    .delete()
+    .eq('id', pollId)
+  
+  if (error) {
+    console.error("Error deleting poll:", error)
+    throw error
   }
 }
-
