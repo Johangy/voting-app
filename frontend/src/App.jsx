@@ -33,7 +33,7 @@ function App() {
     setOptions([]);
     await load();
     setMessage("Encuesta registrada exitosamente");
-    setTimeout(() => setMessage(""), 3000); // se borra en 3 segundos
+    setTimeout(() => setMessage(""), 4000); // se borra en 3 segundos
   }
 
   async function handleVote(optionId, pollId) {
@@ -43,11 +43,17 @@ function App() {
     setTimeout(() => setVoteMessagePollId(null), 3000);
   }
 
+
   async function handleDeletePoll(pollId) {
     if (window.confirm("¿Seguro que deseas eliminar esta encuesta?")) {
       try {
         await deletePoll(pollId);
-        await load();
+        await load(); // Recargar la lista
+        
+        // NUEVO: Mostrar mensaje de éxito
+        setMessage("Encuesta eliminada exitosamente");
+        setTimeout(() => setMessage(""), 4000); // Borrar mensaje a los 4 seg
+        
       } catch (err) {
         alert("Error al eliminar la encuesta");
       }
@@ -56,6 +62,34 @@ function App() {
 
   return (
     <div style={{ maxWidth: 900, margin: "2rem auto", textAlign: "center" }}>
+      
+      {/* --- NOTIFICACIÓN FLOTANTE (ESTILO "TOAST" INFERIOR) --- */}
+      {message && (
+        <div style={{
+          position: "fixed",
+          bottom: "30px",          // Pegado abajo (30px de margen)
+          right: "30px",           // Pegado a la derecha
+          background: "#27ae60",   // Verde éxito
+          color: "white",
+          padding: "1rem 1.5rem",
+          borderRadius: "12px",    // Bordes un poco menos redondos (más moderno)
+          boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+          zIndex: 9999,            // Siempre encima
+          fontSize: "1rem",
+          fontWeight: "600",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          animation: "slideIn 0.3s ease-out", // Animación de entrada
+          minWidth: "250px",       // Tamaño mínimo para que se vea bien
+        }}>
+          {/* Icono pequeño */}
+          <span style={{ fontSize: "1.2rem" }}></span> 
+          {message}
+        </div>
+      )}
+      
+     
       <h1 style={{
         fontSize: "3rem",
         fontWeight: "700",
@@ -79,7 +113,7 @@ function App() {
         boxShadow: "0 8px 20px rgba(0, 150, 255, 0.3), 0 4px 10px rgba(0,0,0,0.4)" 
       }}>
         <h2 style={{ color: "#1abc9c" }}>Crear encuesta</h2>
-        {message && (
+        {/*message && (
           <div style={{
             background: "#2ecc71",
             color: "white",
@@ -89,7 +123,7 @@ function App() {
           }}>
             {message}
           </div>
-        )}
+        )*/}
         <input
           placeholder="Título de la encuesta"
           value={title}
