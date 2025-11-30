@@ -1,111 +1,67 @@
-###Voting App
+# Voting App (Serverless Edition) 
 
-Aplicación de votación simple construida como prueba técnica de Desarrollador Full‑Stack (Java + JS + Docker)
+Esta es la versión modernizada y migrada a arquitectura Serverless de la aplicación de votación. Se ha refactorizado el backend monolítico original para utilizar **Supabase** y desplegar el frontend en **Vercel**.
 
+> **Nota:** Si buscas la versión original con Java Spring Boot y Docker, por favor cambia a la rama `main`.
 
-###Tecnologías usadas
-Backend: Java 17 + Spring Boot + Maven
-Base de datos: PostgreSQL 14
-Frontend: React (Vite) + Nginx (multi‑stage build)
-Infraestructura: Docker y Docker Compose
+## Arquitectura Moderna
 
+| Componente | Tecnología | Descripción |
+| :--- | :--- | :--- |
+| **Frontend** | React + Vite | Single Page Application (SPA) optimizada. |
+| **Backend** | Supabase Edge Functions | Funciones TypeScript ejecutadas en el borde (Deno). |
+| **Base de Datos** | PostgreSQL (Supabase) | Base de datos relacional gestionada con RLS habilitado. |
+| **Hosting** | Vercel | Despliegue continuo y CDN global. |
 
-###Cómo levantar el proyecto
+## Características de la Migración
 
-Requisitos previos:
-- Para ejecución en entorno local
+1.  **Eliminación de Servidores:** Se retiró el contenedor Docker de Java y la base de datos local.
+2.  **Base de Datos Cloud:** Migración de esquema a PostgreSQL en la nube.
+3.  **Seguridad RLS:** Implementación de *Row Level Security* para proteger los datos directamente en la base de datos.
+4.  **UX Mejorada:** Notificaciones tipo "Toast" y ordenamiento automático de opciones.
 
-Para correr la aplicación en tu máquina necesitas:
-Docker y Docker Compose instalados
-Java 17 o superior (para compilar y ejecutar el backend si lo deseas fuera de Docker)
-Maven (para gestionar dependencias del backend)
-Node.js 18+ y npm (para compilar el frontend si lo deseas fuera de Docker)
-Puertos libres:
-8080 para el frontend
-8081 para el backend
-5432 para la base de datos
+## Demo en Vivo
 
-Nota: si usas únicamente Docker Compose, no es necesario tener Node ni Java instalados en tu máquina, ya que las imágenes se encargan de compilar y ejecutar todo.
-
-
-###Ejecución en entorno local
-
-1. Clonar el repositorio:
-	git clone https://github.com/Johangy/voting-app.git
-	cd voting-app
-	git checkout main
-
-2. Construir y levantar los servicios:
-	docker compose build --no-cache
-	docker compose up -d
-	docker compose ps
-
-3. Acceder a la aplicación:
-Frontend: http://localhost:8080
-Backend API: http://localhost:8081/api/polls
-Base de datos: PostgreSQL en localhost:5432
-	Usuario: postgres
-	Password: admin
-	DB: votingapp
-
-
-###Ejecución en Play With Docker (PWD)
-
-1. Iniciar una nueva sesión en https://labs.play-with-docker.com
-2. Clonar el repositorio dentro de la instancia:
-	git clone https://github.com/Johangy/voting-app.git
-	cd voting-app
-	git checkout main
-	docker compose build --no-cache
-	docker compose up -d
-	docker compose ps
-3. Acceder a la aplicación:
-	En PWD, los puertos no se exponen en localhost, sino en URLs públicas que aparecen al abrir cada puerto.
-	Ejemplo:
-	Frontend: http://ipXXXX-8080.direct.labs.play-with-docker.com
-	Backend API: http://ipXXXX-8081.direct.labs.play-with-docker.com/api/polls
-	La base de datos (5432) solo es accesible desde dentro de PWD o contenedores, no desde el navegador.
-
-
-###Variables de entorno
-
-El backend lee la configuración de la base de datos desde variables definidas en docker-compose.yml:
-SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/votingapp
-SPRING_DATASOURCE_USERNAME=postgres
-SPRING_DATASOURCE_PASSWORD=admin
-
-
-###Estructura del proyecto
-
-voting-app/ 
-	backend/ # Código del backend (Spring Boot)
-		src/main 
-		Dockerfile
-		pom.xml 
-	frontend/ # Código del frontend (React + Vite) 
-		src/ 
-		public/ 
-		Dockerfile 
-	docker-compose.yml 
-	.gitignore 
-	README.md
-
-
-###Funcionalidades
-
-Crear encuestas con título y opciones
-Listar encuestas existentes
-Votar por una opción
-Ver conteo de votos actualizado en tiempo real
-
-
-###Flujo de ramas
-
-feature/backend : API en Spring Boot
-feature/frontend : SPA en React
-feature/docker : Dockerfiles y Compose
-develop : integración de todas las features
-main : rama estable final para entrega
+Prueba la aplicación funcionando aquí:
+ **[https://sistema-de-votacion-encuestas.vercel.app/]**
 
 
 
+## Instalación y Desarrollo Local
+
+Para correr este proyecto en tu máquina:
+
+1.  **Clonar la rama de migración:**
+    
+    git clone [https://github.com/Johangy/voting-app.git](https://github.com/Johangy/voting-app.git)
+    cd voting-app
+    git checkout feature/supabase-migration
+    
+
+2.  **Instalar dependencias:**
+    
+    cd frontend
+    npm install
+    
+
+3.  **Configurar Variables de Entorno:**
+    Crea un archivo `.env.local` dentro de `frontend/` con tus credenciales de Supabase:
+    
+    VITE_SUPABASE_URL=tu_url_de_supabase
+    VITE_SUPABASE_ANON_KEY=tu_anon_key
+    
+
+4.  **Ejecutar:**
+    
+    npm run dev
+    
+
+## Estructura del Proyecto
+
+
+voting-app/
+├── frontend/          # Código fuente React (Vite)
+│   ├── src/           # Componentes y lógica (api.js con cliente Supabase)
+│   ├── public/        # Assets estáticos
+│   └── .env.local     # Variables de entorno (No subir a Git)
+└── README.md          # Documentación actual
